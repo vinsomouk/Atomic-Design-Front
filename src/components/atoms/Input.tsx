@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+// src/components/atoms/Input.tsx
+import React from 'react';
 
 interface InputProps {
-  label: string;
+    label: string;
+    type?: string; // Type est optionnel
+    value: string; // Value est requis
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Typage de l'événement
 }
 
-const Input: React.FC<InputProps> = ({ label }) => {
-    const [query, setQuery] = useState('');
-
+const Input: React.FC<InputProps> = ({ label, type = 'text', value, onChange }) => {
     return (
-        <>
-            <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="border px-2 py-2 my-2 w-3/4"
-                placeholder={ label }
+        <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">{label}</label>
+            <input 
+                type={type} 
+                value={value} 
+                onChange={onChange} 
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500" 
             />
-        </>
+        </div>
     );
 };
 
