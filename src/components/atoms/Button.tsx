@@ -2,17 +2,15 @@
 import React from 'react';
 
 interface ButtonProps {
-    label: string;
     onClick: () => void;
+    disabled?: boolean;
+    children: React.ReactNode; // Ajoutez cette ligne pour accepter les enfants
 }
 
-const Button: React.FC<ButtonProps> = ({ label, onClick }) => {
+const Button: React.FC<ButtonProps> = ({ onClick, disabled, children }) => {
     return (
-        <button 
-            onClick={onClick} 
-            className="mt-4 bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700"
-        >
-            {label}
+        <button onClick={onClick} disabled={disabled}>
+            {children}
         </button>
     );
 };

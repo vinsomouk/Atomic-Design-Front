@@ -1,11 +1,14 @@
 // src/components/atoms/Input.tsx
 import React from 'react';
 
+// src/components/atoms/Input.tsx
+
 interface InputProps {
     label: string;
-    type?: string; // Type est optionnel
-    value: string; // Value est requis
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; // Typage de l'événement
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string; // Optionnel, par défaut 'text'
+    required?: boolean; // Ajoutez cette ligne
 }
 
 const Input: React.FC<InputProps> = ({ label, type = 'text', value, onChange }) => {

@@ -1,33 +1,36 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { apiSlice } from "../apiSlice";
 
-const api = createApi({
-    reducerPath: 'api',
-    baseQuery: fetchBaseQuery({ 
-        baseUrl: 'http://localhost:8000/api',
-        prepareHeaders: (headers) => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                headers.set('Authorization', `Bearer ${token}`);
-            }
-            return headers;
-        },
-    }),
+export const authApi = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        // Définissez la mutation pour la connexion
-        login: builder.mutation<{ token: string }, { email: string; password: string }>({
+        checkAuth: builder.query<any, void>({
+            query: () => '/api/me',
+            transformResponse(response: any) {
+                return response;
+            },
+            providesTags: [{ type: 'Auth', id: 'STATUS' }],
+        }),
+        login: builder.mutation<any, { email: string, password: string }>({
             query: (credentials) => ({
-                url: '/login_check', 
+                url: '/api/login_check',
                 method: 'POST',
                 body: credentials,
             }),
-        }),
-        // Endpoint pour vérifier l'authentification
-        checkAuth: builder.query<any, void>({
-            query: () => '/login_check', 
+            transformResponse: (response: any) => {
+                console.log('Login response:', response); // Log pour vérifier la réponse de connexion
+                if (response?.token) {
+                    localStorage.setItem('accessToken', response.token);
+                    console.log('Token stored in localStorage:', response.token); // Log pour vérifier le stockage du token
+                } else {
+                    console.log('No token received in login response.'); // Log si pas de token
+                }
+                return response;
+            },
+            invalidatesTags: [{ type: 'Auth', id: 'STATUS' }],
         }),
     }),
 });
 
-// Exportez les hooks générés par Redux Toolkit
-export const { useCheckAuthQuery, useLoginMutation } = api;
-export default api;
+export const {
+    useCheckAuthQuery,
+    useLoginMutation,
+} = authApi;
