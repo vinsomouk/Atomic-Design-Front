@@ -2,33 +2,28 @@ import React, { useState } from 'react';
 import Button from '../atoms/Button';
 import Input from '../atoms/Input';
 import { useLoginMutation } from '../../api/endpoints/auth';
+import { useNavigate } from 'react-router-dom'; // Importer useNavigate
 
-interface LoginFormProps {
-    onLogin: (email: string, password: string) => void;
-}
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [login, { isLoading }] = useLoginMutation();
+const LoginForm: React.FC<LoginFormProps> = () => {
+    const [email, setEmail] = useState<string>('');
+    const [password, setPassword] = useState<string>('');
+    const [loginUser] = useLoginMutation();
+    const navigate = useNavigate(); // Initialiser useNavigate
 
-    const handleLogin = async () => {
-        try {
-            console.log('Attempting to login with:', { email, password }); // Log pour vérifier les identifiants
-            const response = await login({ email, password }).unwrap();
-            console.log('Login successful:', response); // Log pour vérifier la réussite de la connexion
-            
-            
-        } catch (err) {
-            console.error('Login failed:', err);
-            if (err.data) {
-                console.log('Error response:', err.status); // Log pour vérifier la réponse d'erreur
-            }
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault(); // Empêcher le rechargement de la page
+        const response = await loginUser({email, password}).unwrap()
+        if (response) {
+            navigate('/modules'); // Rediriger vers la page home
         }
     };
 
+    
+
     return (
-        <div className="login-form">
+        <form onSubmit={handleSubmit} className="login-form">
             <h2 className="my-2 text-xl font-bold">Login Section</h2>
             <Input 
                 label="Email" 
@@ -43,10 +38,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 onChange={(e) => setPassword(e.target.value)} 
                 required 
             />
-            <Button onClick={handleLogin} disabled={isLoading}>
-                {isLoading ? 'Connexion...' : 'Se connecter'}
-            </Button>
-        </div>
+            <Button type="submit">Se connecter</Button>
+        </form>
     );
 };
 
